@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -58,47 +57,47 @@
     </style>
 </head>
 
-<body class="min-h-screen bg-[#f6f7f3]">
+<body class="min-h-screen overflow-x-hidden bg-[#f6f7f3]">
 
     <main class="min-h-screen grid grid-cols-1 lg:grid-cols-2">
 
-        <!-- LEFT: HERO IMAGE -->
-        <section class="login-bg relative hidden min-h-screen flex-col justify-between p-10 text-white lg:flex xl:p-14">
+        <!-- LEFT: HERO IMAGE (hanya tampil di desktop) -->
+        <section class="login-bg relative hidden min-h-screen flex-col justify-between p-8 text-white lg:flex xl:p-14">
 
             <div class="absolute inset-0 bg-[#10261b]/10"></div>
 
             <div class="relative z-10 flex items-center gap-3">
-                <div class="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/30 bg-white/15 text-xl backdrop-blur-md">
+                <div class="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/30 bg-white/15 text-xl backdrop-blur-md xl:h-12 xl:w-12">
                     🐦
                 </div>
                 <div>
-                    <p class="text-lg font-bold tracking-wide">BURUNG JUARA</p>
-                    <p class="text-xs tracking-[.2em] text-white/75">JUDGING MANAGEMENT SYSTEM</p>
+                    <p class="text-base font-bold tracking-wide xl:text-lg">BURUNG JUARA</p>
+                    <p class="text-[10px] tracking-[.2em] text-white/75 xl:text-xs">JUDGING MANAGEMENT SYSTEM</p>
                 </div>
             </div>
 
             <div class="relative z-10 max-w-xl fade-in">
-                <span class="mb-5 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-2 text-xs font-medium tracking-wider backdrop-blur-md">
+                <span class="mb-4 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3 py-1.5 text-[11px] font-medium tracking-wider backdrop-blur-md xl:mb-5 xl:px-4 xl:py-2 xl:text-xs">
                     <span class="h-2 w-2 rounded-full bg-lime-300"></span>
                     SISTEM PENJURIAN DIGITAL
                 </span>
 
-                <h1 class="text-4xl font-bold leading-tight xl:text-5xl">
+                <h1 class="text-3xl font-bold leading-tight xl:text-5xl">
                     Menilai dengan objektif,
                     <span class="text-lime-300">menentukan juara dengan integritas.</span>
                 </h1>
 
-                <p class="mt-5 max-w-md text-sm leading-7 text-white/80 xl:text-base">
+                <p class="mt-4 max-w-md text-sm leading-6 text-white/80 xl:mt-5 xl:text-base xl:leading-7">
                     Selamat datang di sistem penjurian burung. Kelola proses penilaian,
                     pantau hasil, dan wujudkan kompetisi yang lebih transparan serta profesional.
                 </p>
 
-                <div class="mt-8 flex flex-wrap gap-3">
-                    <div class="rounded-xl border border-white/20 bg-white/10 px-4 py-3 backdrop-blur-md">
+                <div class="mt-6 flex flex-wrap gap-3 xl:mt-8">
+                    <div class="rounded-xl border border-white/20 bg-white/10 px-3 py-2.5 backdrop-blur-md xl:px-4 xl:py-3">
                         <p class="text-sm font-semibold">Penilaian Terstruktur</p>
                         <p class="mt-1 text-xs text-white/70">Lebih rapi dan sistematis</p>
                     </div>
-                    <div class="rounded-xl border border-white/20 bg-white/10 px-4 py-3 backdrop-blur-md">
+                    <div class="rounded-xl border border-white/20 bg-white/10 px-3 py-2.5 backdrop-blur-md xl:px-4 xl:py-3">
                         <p class="text-sm font-semibold">Hasil Terintegrasi</p>
                         <p class="mt-1 text-xs text-white/70">Mudah dipantau</p>
                     </div>
@@ -113,39 +112,39 @@
 
 
         <!-- RIGHT: LOGIN FORM -->
-        <section class="flex min-h-screen items-center justify-center px-6 py-10 sm:px-10 lg:px-12 xl:px-20">
+        <section class="flex min-h-screen items-center justify-center px-4 py-8 sm:px-8 sm:py-10 lg:px-12 xl:px-20">
 
             <div class="w-full max-w-md fade-in">
 
-                <!-- Mobile brand -->
-                <div class="mb-10 flex items-center gap-3 lg:hidden">
-                    <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#e5eee4] text-xl">
+                <!-- Mobile / Tablet brand -->
+                <div class="mb-8 flex items-center gap-3 lg:hidden">
+                    <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#e5eee4] text-xl">
                         🐦
                     </div>
                     <div>
                         <p class="font-bold tracking-wide text-[#244a32]">BURUNG JUARA</p>
-                        <p class="text-xs tracking-wider text-gray-500">JUDGING MANAGEMENT SYSTEM</p>
+                        <p class="text-[11px] tracking-wider text-gray-500">JUDGING MANAGEMENT SYSTEM</p>
                     </div>
                 </div>
 
-                <div class="mb-8">
-                    <div class="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#e5eee4] text-[#315c3d]">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7"
+                <div class="mb-6 sm:mb-8">
+                    <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#e5eee4] text-[#315c3d] sm:mb-5 sm:h-14 sm:w-14">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 sm:h-7 sm:w-7"
                              fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                   d="M15 7a3 3 0 11-6 0 3 3 0 016 0zM5.5 20a6.5 6.5 0 0113 0M18 8l1.5 1.5L22 7"/>
                         </svg>
                     </div>
 
-                    <p class="mb-2 text-sm font-semibold uppercase tracking-[.18em] text-[#527b5d]">
+                    <p class="mb-1.5 text-xs font-semibold uppercase tracking-[.18em] text-[#527b5d] sm:mb-2 sm:text-sm">
                         Welcome Back
                     </p>
 
-                    <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+                    <h2 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
                         Selamat Datang!
                     </h2>
 
-                    <p class="mt-3 text-sm leading-6 text-gray-500">
+                    <p class="mt-2 text-sm leading-6 text-gray-500 sm:mt-3">
                         Masuk ke akunmu untuk melanjutkan pengelolaan
                         Sistem Penjurian Burung.
                     </p>
@@ -159,17 +158,17 @@
                 @endif
 
                 <!-- Login form -->
-                <form method="POST" action="{{ route('login') }}" class="space-y-5">
+                <form method="POST" action="{{ route('login') }}" class="space-y-4 sm:space-y-5">
                     @csrf
 
                     <!-- Email -->
                     <div>
-                        <label for="email" class="mb-2 block text-sm font-semibold text-gray-700">
+                        <label for="email" class="mb-1.5 block text-sm font-semibold text-gray-700 sm:mb-2">
                             Alamat Email
                         </label>
 
                         <div class="relative">
-                            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+                            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400 sm:pl-4">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
                                      fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7">
                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -186,18 +185,18 @@
                                 autofocus
                                 autocomplete="username"
                                 placeholder="nama@email.com"
-                                class="form-input block w-full rounded-xl border border-gray-200 bg-white py-3.5 pl-12 pr-4 text-sm text-gray-800 outline-none placeholder:text-gray-400"
+                                class="form-input block w-full rounded-xl border border-gray-200 bg-white py-3 pl-11 pr-4 text-sm text-gray-800 outline-none placeholder:text-gray-400 sm:py-3.5 sm:pl-12"
                             >
                         </div>
 
                         @error('email')
-                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-1.5 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <!-- Password -->
                     <div>
-                        <div class="mb-2 flex items-center justify-between gap-3">
+                        <div class="mb-1.5 flex items-center justify-between gap-3 sm:mb-2">
                             <label for="password" class="block text-sm font-semibold text-gray-700">
                                 Password
                             </label>
@@ -211,7 +210,7 @@
                         </div>
 
                         <div class="relative">
-                            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+                            <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400 sm:pl-4">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
                                      fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7">
                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -226,7 +225,7 @@
                                 required
                                 autocomplete="current-password"
                                 placeholder="Masukkan password"
-                                class="form-input block w-full rounded-xl border border-gray-200 bg-white py-3.5 pl-12 pr-14 text-sm text-gray-800 outline-none placeholder:text-gray-400"
+                                class="form-input block w-full rounded-xl border border-gray-200 bg-white py-3 pl-11 pr-12 text-sm text-gray-800 outline-none placeholder:text-gray-400 sm:py-3.5 sm:pl-12 sm:pr-14"
                             >
 
                             <button
@@ -234,7 +233,7 @@
                                 id="togglePassword"
                                 aria-label="Tampilkan password"
                                 aria-pressed="false"
-                                class="absolute inset-y-0 right-0 flex items-center px-4 text-gray-400 transition hover:text-[#315c3d]"
+                                class="absolute inset-y-0 right-0 flex items-center px-3.5 text-gray-400 transition hover:text-[#315c3d] sm:px-4"
                             >
                                 <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg"
                                      class="h-5 w-5" fill="none" viewBox="0 0 24 24"
@@ -247,12 +246,12 @@
                         </div>
 
                         @error('password')
-                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-1.5 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
 
                     <!-- Remember me -->
-                    <div class="flex items-center">
+                    <div class="flex items-center pt-1">
                         <input
                             id="remember"
                             type="checkbox"
@@ -281,7 +280,7 @@
 
                 <!-- Register link -->
                 @if (Route::has('register'))
-                    <div class="mt-7 text-center">
+                    <div class="mt-6 text-center sm:mt-7">
                         <p class="text-sm text-gray-500">
                             Belum punya akun?
                             <a href="{{ route('register') }}"
@@ -292,7 +291,7 @@
                     </div>
                 @endif
 
-                <div class="mt-10 border-t border-gray-200 pt-5 text-center">
+                <div class="mt-8 border-t border-gray-200 pt-4 text-center sm:mt-10 sm:pt-5">
                     <p class="text-xs leading-5 text-gray-400">
                         Sistem Penjurian Burung · Platform Pengelolaan Kompetisi
                     </p>
