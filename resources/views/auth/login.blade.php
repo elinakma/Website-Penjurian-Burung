@@ -162,35 +162,35 @@
                 <form method="POST" action="{{ route('login') }}" class="space-y-5">
                     @csrf
 
-                    <!-- Email -->
+                    <!-- Login (email / telepon / nama) -->
                     <div>
-                        <label for="email" class="mb-2 block text-sm font-semibold text-gray-700">
-                            Alamat Email
+                        <label for="login" class="mb-2 block text-sm font-semibold text-gray-700">
+                            Nama / No Telepon / Email
                         </label>
 
                         <div class="relative">
                             <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
-                                     fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7">
+                                    fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7">
                                     <path stroke-linecap="round" stroke-linejoin="round"
-                                          d="M3 7l9 6 9-6M5 5h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2z"/>
+                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                 </svg>
                             </div>
 
                             <input
-                                id="email"
-                                type="email"
-                                name="email"
-                                value="{{ old('email') }}"
+                                id="login"
+                                type="text"
+                                name="login"
+                                value="{{ old('login') }}"
                                 required
                                 autofocus
                                 autocomplete="username"
-                                placeholder="nama@email.com"
+                                placeholder="Masukkan nama / no telepon / email"
                                 class="form-input block w-full rounded-xl border border-gray-200 bg-white py-3.5 pl-12 pr-4 text-sm text-gray-800 outline-none placeholder:text-gray-400"
                             >
                         </div>
 
-                        @error('email')
+                        @error('login')
                             <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>

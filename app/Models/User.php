@@ -54,4 +54,19 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Role::class);
     }
+
+    public function acaras()
+    {
+        return $this->hasMany(Acara::class, 'pengguna_id');
+    }
+
+    public function kelasSebagaiJuri()
+    {
+        return $this->belongsToMany(
+            KelasLomba::class,
+            'kelas_lomba_juri',
+            'user_id',
+            'kelas_id'
+        )->withTimestamps();
+    }
 }

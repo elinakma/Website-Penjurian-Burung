@@ -1,40 +1,28 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            @if(auth()->user()->role->name === 'admin')
-                Dashboard Admin
-            @elseif(auth()->user()->role->name === 'juri')
-                Dashboard Juri
-            @else
-                Dashboard Peserta
-            @endif
-        </h2>
+        <div class="relative overflow-hidden rounded-2xl p-6 sm:p-8 shadow-sm" style="background: linear-gradient(90deg, #E6F2DD 0%, #527b5d 100%);">
+            <div>
+                <h1 class="text-2xl font-bold text-[#0e1e17]">Dashboard</h1>
+                <p class="text-sm text-gray-500 mt-1">
+                    Selamat datang, <span class="font-medium text-[#527b5d]">{{ Auth::user()->name }}</span>
+                </p>
+            </div>
+        </div>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-
-                    {{-- ==================== ADMIN ==================== --}}
-                    @if(auth()->user()->role->name === 'admin')
-                        <h3 class="text-lg font-bold mb-4">Selamat datang, {{ auth()->user()->name }} (Admin)</h3>
-                        <p>Ini adalah halaman khusus Admin.</p>
-                        {{-- Tambahkan konten admin di sini --}}
-
-                    {{-- ==================== JURI ==================== --}}
-                    @elseif(auth()->user()->role->name === 'juri')
-                        <h3 class="text-lg font-bold mb-4">Selamat datang, {{ auth()->user()->name }} (Juri)</h3>
-                        <p>Ini adalah halaman khusus Juri.</p>
-                        {{-- Tambahkan konten juri di sini --}}
-
-                    {{-- ==================== PESERTA ==================== --}}
-                    @else
-                        <h3 class="text-lg font-bold mb-4">Selamat datang, {{ auth()->user()->name }} (Peserta)</h3>
-                        <p>Ini adalah halaman khusus Peserta.</p>
-                        {{-- Tambahkan konten peserta di sini --}}
-                    @endif
-
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        {{-- Card contoh --}}
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition duration-300">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-[#e8f0eb] flex items-center justify-center">
+                    <svg class="w-6 h-6 text-[#527b5d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Total Acara</p>
+                    <p class="text-2xl font-bold text-[#0e1e17]">12</p>
                 </div>
             </div>
         </div>
