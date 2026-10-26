@@ -5,6 +5,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AcaraController;
 use App\Http\Controllers\BurungController;
 use App\Http\Controllers\KelasLombaController;
+use App\Http\Controllers\PembayaranController;
+use App\Http\Controllers\PenilaianController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -26,6 +28,8 @@ Route::middleware('auth')->group(function () {
     Route::post('acara/{acara}/mulai', [AcaraController::class, 'mulai'])->name('acara.mulai');
     Route::resource('burung', BurungController::class);
     Route::resource('kelas-lomba', KelasLombaController::class);
+    Route::resource('pembayaran', PembayaranController::class)->only(['index', 'show']);
+    Route::resource('penilaian', PenilaianController::class)->only(['index', 'show']);
 });
 
 require __DIR__.'/auth.php';

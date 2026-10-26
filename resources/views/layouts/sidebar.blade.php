@@ -104,8 +104,8 @@
                 Operasional Lomba
             </div>
 
-            <a href="#"
-               class="sidebar-link">
+            <a href="{{ route('pembayaran.index') }}"
+               class="sidebar-link {{ request()->routeIs('pembayaran.*') ? 'active' : '' }}">
 
                 <svg class="w-5 h-5"
                      fill="none"
@@ -161,8 +161,8 @@
                 Acara
             </a>
 
-            <a href="#"
-               class="sidebar-link">
+            <a href="{{ route('penilaian.index') }}"
+               class="sidebar-link {{ request()->routeIs('penilaian.*') ? 'active' : '' }}">
 
                 <svg class="w-5 h-5"
                      fill="none"
