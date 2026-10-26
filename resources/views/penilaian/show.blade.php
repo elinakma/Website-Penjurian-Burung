@@ -188,11 +188,11 @@
                             </span>
                             <div>
                                 <h3 class="font-bold text-white">Juri {{ $item['kode'] }}</h3>
-                                <p class="text-xs text-green-100">{{ $item['nama'] }}</p>
+                                <p class="text-xs font-bold text-white">{{ $item['nama'] }}</p>
                             </div>
                         </div>
 
-                        <div class="space-y-3 p-3">
+                        <div class="space-y-4 p-4">
                             @for($slot = 1; $slot <= 6; $slot++)
                                 <div>
                                     <label for="juri-{{ $item['kode'] }}-slot-{{ $slot }}"
