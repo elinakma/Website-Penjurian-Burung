@@ -7,6 +7,7 @@ use App\Http\Controllers\BurungController;
 use App\Http\Controllers\KelasLombaController;
 use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\PenilaianController;
+use App\Http\Controllers\PesertaController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -30,6 +31,16 @@ Route::middleware('auth')->group(function () {
     Route::resource('kelas-lomba', KelasLombaController::class);
     Route::resource('pembayaran', PembayaranController::class)->only(['index', 'show']);
     Route::resource('penilaian', PenilaianController::class)->only(['index', 'show']);
+
+    Route::get('/peserta/daftar', [PesertaController::class, 'create'])->name('peserta.daftar');
+    Route::post('/peserta/daftar', [PesertaController::class, 'store'])->name('peserta.daftar.store');
+    Route::get('/peserta/riwayat', [PesertaController::class, 'riwayat'])->name('peserta.riwayat');
+    Route::post('/peserta/{id}/upload-bukti', [PesertaController::class, 'uploadBukti'])
+    ->name('peserta.upload-bukti');
+
+    Route::resource('pembayaran', PembayaranController::class)->only(['index', 'show']);
+    Route::patch('pembayaran/{pembayaran}/status', [PembayaranController::class, 'updateStatus'])
+        ->name('pembayaran.update-status');
 });
 
 require __DIR__.'/auth.php';
