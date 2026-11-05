@@ -14,6 +14,7 @@ class Pembayaran extends Model
         'foto',
         'keterangan',
         'status',
+        'catatan_admin',
     ];
 
     public function peserta()

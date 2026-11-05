@@ -1,4 +1,3 @@
-```blade
 <x-app-layout>
     <x-slot name="header">
         <div class="relative overflow-hidden rounded-2xl p-6 sm:p-8 shadow-sm"
@@ -53,8 +52,11 @@
                         <select id="status" name="status"
                             class="w-full rounded-xl border-gray-200 px-3 py-2.5 text-sm focus:border-[#527b5d] focus:ring-[#527b5d]">
                             <option value="">Semua Status</option>
+                            <option value="belum_bayar" {{ request('status') == 'belum_bayar' ? 'selected' : '' }}>
+                                Belum Upload Bukti
+                            </option>
                             <option value="menunggu" {{ request('status') == 'menunggu' ? 'selected' : '' }}>
-                                Menunggu
+                                Menunggu Verifikasi
                             </option>
                             <option value="diterima" {{ request('status') == 'diterima' ? 'selected' : '' }}>
                                 Diterima
@@ -103,6 +105,7 @@
                             <th class="w-16 px-4 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-[#24482f]">No</th>
                             <th class="px-6 py-3.5 text-left text-xs font-bold uppercase tracking-wider text-[#24482f]">Peserta</th>
                             <th class="px-6 py-3.5 text-left text-xs font-bold uppercase tracking-wider text-[#24482f]">Burung / Kelas</th>
+                            <th class="px-6 py-3.5 text-right text-xs font-bold uppercase tracking-wider text-[#24482f]">Total Bayar</th>
                             <th class="px-6 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-[#24482f]">Status</th>
                             <th class="px-6 py-3.5 text-center text-xs font-bold uppercase tracking-wider text-[#24482f]">Aksi</th>
                         </tr>
@@ -110,6 +113,9 @@
 
                     <tbody class="divide-y divide-gray-100">
                         @forelse($pembayarans as $index => $item)
+                            @php
+                                $bayar = $item->daftar_kelas->pluck('pembayaran')->filter()->first();
+                            @endphp
                             <tr class="transition-colors hover:bg-[#f8faf9]">
                                 <td class="px-4 py-4 text-center">
                                     <span class="text-sm font-semibold text-gray-700">
@@ -118,62 +124,49 @@
                                 </td>
 
                                 <td class="px-6 py-4">
-                                    <p class="text-sm font-semibold text-gray-800">
-                                        {{ $item->peserta?->user?->name ?? '-' }}
-                                    </p>
-                                    <p class="mt-0.5 text-xs text-gray-500">
-                                        {{ $item->peserta?->acara?->nama ?? '-' }}
-                                    </p>
+                                    <p class="text-sm font-semibold text-gray-800">{{ $item->user?->name ?? '-' }}</p>
+                                    <p class="mt-0.5 text-xs text-gray-500">{{ $item->acara?->nama ?? '-' }}</p>
                                 </td>
 
                                 <td class="px-6 py-4">
-                                    <p class="text-sm font-medium text-gray-800">
-                                        {{ $item->peserta?->nama_burung ?? '-' }}
-                                    </p>
-                                    <p class="mt-0.5 text-xs text-gray-500">
-                                        {{ $item->peserta?->kelasLomba?->nama ?? '-' }}
-                                        • No. {{ $item->peserta?->nomor_gantangan ?? '-' }}
-                                    </p>
+                                    <p class="text-sm font-medium text-gray-800">{{ $item->nama_burung ?? '-' }}</p>
+                                    <p class="mt-0.5 text-xs text-gray-500">{{ $item->jumlah_kelas }} kelas lomba</p>
+                                </td>
+
+                                <td class="px-6 py-4 text-right">
+                                    <span class="text-sm font-bold text-[#527b5d]">
+                                        Rp{{ number_format($item->total_harga, 0, ',', '.') }}
+                                    </span>
                                 </td>
 
                                 <td class="px-6 py-4 text-center">
-                                    @if($item->status === 'menunggu')
-                                        <span class="inline-flex items-center rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">
-                                            Menunggu
-                                        </span>
-                                    @elseif($item->status === 'diterima')
-                                        <span class="inline-flex items-center rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
-                                            Diterima
-                                        </span>
+                                    @if(!$bayar)
+                                        <span class="inline-flex items-center rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-600">Belum Bayar</span>
+                                    @elseif($bayar->status === 'menunggu')
+                                        <span class="inline-flex items-center rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700">Menunggu</span>
+                                    @elseif($bayar->status === 'diterima')
+                                        <span class="inline-flex items-center rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">Diterima</span>
                                     @else
-                                        <span class="inline-flex items-center rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-700">
-                                            Ditolak
-                                        </span>
+                                        <span class="inline-flex items-center rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-700">Ditolak</span>
                                     @endif
                                 </td>
 
                                 <td class="px-6 py-4 text-center">
-                                    <a href="{{ route('pembayaran.show', $item->id_pembayaran) }}"
+                                    <a href="{{ $bayar ? route('pembayaran.show', $bayar->id_pembayaran) : route('pembayaran.detail', $item->id) }}"
                                     class="inline-flex items-center gap-1.5 rounded-lg bg-[#527b5d] px-3 py-2 text-xs font-semibold text-white transition hover:bg-[#42684d]">
-                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M2.458 12C3.732 7.943 7.523 5 12 5s8.268 2.943 9.542 7c-1.274 4.057-5.065 7-9.542 7s-8.268-2.943-9.542-7z"/>
-                                        </svg>
                                         Detail
                                     </a>
                                 </td>
                             </tr>
-                        @empty
+                            @empty
                             <tr>
-                                <td colspan="5" class="px-6 py-16 text-center">
+                                <td colspan="6" class="px-6 py-16 text-center">
                                     <div class="flex flex-col items-center gap-2">
                                         <svg class="h-10 w-10 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <circle cx="11" cy="11" r="7" stroke-width="1.5"/>
                                             <path stroke-linecap="round" stroke-width="1.5" d="m16 16 4 4"/>
                                         </svg>
-                                        <p class="text-sm font-medium text-gray-500">Tidak ada data pembayaran.</p>
+                                        <p class="text-sm font-medium text-gray-500">Tidak ada data pendaftaran.</p>
                                         <a href="{{ route('pembayaran.index') }}" class="text-sm font-semibold text-[#527b5d] hover:underline">
                                             Reset filter
                                         </a>
@@ -193,4 +186,3 @@
         </div>
     </div>
 </x-app-layout>
-```

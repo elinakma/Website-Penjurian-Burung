@@ -24,11 +24,8 @@
 
                 {{-- Flash Message --}}
                 @if(session('success'))
-                    <div class="mx-4 mt-4 p-4 rounded-xl bg-emerald-50 text-emerald-700 text-sm border border-emerald-100 flex items-start gap-3">
-                        <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                        </svg>
-                        <span>{{ session('success') }}</span>
+                    <div class="mx-4 mt-4 p-4 rounded-xl bg-emerald-50 text-emerald-700 text-sm border border-emerald-100">
+                        {!! session('success') !!}
                     </div>
                 @endif
                 @if(session('error'))
@@ -55,189 +52,102 @@
                             Daftar Lomba Sekarang
                         </a>
                     </div>
-                @else
+                
+                    @else
+                        <div class="space-y-4 p-4 sm:p-6">
+                            @foreach($riwayats as $acaraId => $items)
+                                @php
+                                    $first      = $items->first();
+                                    $total      = $items->sum('harga');
+                                    $totalFmt   = number_format($total, 0, ',', '.');
+                                    $namaAcara  = $first->acara?->nama ?? '-';
+                                    $pembayaran = $items->pluck('pembayaran')->filter()->first();
+                                    $bisaUpload = !$pembayaran && $first->status === 'menunggu_pembayaran';
 
-                    {{-- ==================== MOBILE CARD ==================== --}}
-                    <div class="block md:hidden divide-y divide-gray-100">
-                        @foreach($riwayats as $item)
-                            <div class="p-4">
-                                {{-- Header Card --}}
-                                <div class="flex items-start justify-between gap-3">
-                                    <div class="flex items-center gap-3 min-w-0">
-                                        <span class="inline-flex items-center justify-center w-11 h-11 rounded-full bg-[#527b5d] text-white text-sm font-bold flex-shrink-0 shadow-sm">
-                                            {{ $item->nomor_gantangan ?? '-' }}
-                                        </span>
+                                    $statusColor = match($first->status) {
+                                        'menunggu_pembayaran' => 'bg-yellow-100 text-yellow-800',
+                                        'menunggu_verifikasi' => 'bg-blue-100 text-blue-800',
+                                        'lunas'               => 'bg-emerald-100 text-emerald-800',
+                                        'ditolak'             => 'bg-red-100 text-red-800',
+                                        default               => 'bg-gray-100 text-gray-700',
+                                    };
+                                    $statusLabel = match($first->status) {
+                                        'menunggu_pembayaran' => 'Menunggu Pembayaran',
+                                        'menunggu_verifikasi' => 'Menunggu Verifikasi',
+                                        'lunas'               => 'Lunas',
+                                        'ditolak'             => 'Ditolak',
+                                        default               => ucfirst(str_replace('_', ' ', $first->status)),
+                                    };
+                                @endphp
+
+                                <div class="overflow-hidden rounded-2xl border border-gray-100 shadow-sm">
+                                    <div class="flex flex-col gap-2 border-b border-gray-100 bg-gray-50 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
                                         <div class="min-w-0">
-                                            <p class="font-semibold text-gray-800 truncate">{{ $item->nama_burung }}</p>
-                                            <p class="text-xs text-gray-500 mt-0.5 truncate">
-                                                {{ $item->kelasLomba?->burung?->nama ?? $item->burung?->nama ?? '-' }}
+                                            <h3 class="truncate font-bold text-gray-800">{{ $namaAcara }}</h3>
+                                            <p class="mt-0.5 text-xs text-gray-500">
+                                                Didaftar {{ $first->created_at->format('d M Y, H:i') }} • {{ $items->count() }} kelas lomba
                                             </p>
                                         </div>
+                                        <span class="inline-flex w-fit whitespace-nowrap rounded-full px-3 py-1 text-xs font-semibold {{ $statusColor }}">
+                                            {{ $statusLabel }}
+                                        </span>
                                     </div>
 
-                                    @php
-                                        $statusColor = match($item->status) {
-                                            'menunggu_pembayaran'   => 'bg-yellow-100 text-yellow-800',
-                                            'menunggu_verifikasi'   => 'bg-blue-100 text-blue-800',
-                                            'lunas'                 => 'bg-emerald-100 text-emerald-800',
-                                            'ditolak'               => 'bg-red-100 text-red-800',
-                                            default                 => 'bg-gray-100 text-gray-700',
-                                        };
-                                        $statusLabel = match($item->status) {
-                                            'menunggu_pembayaran'   => 'Menunggu Bayar',
-                                            'menunggu_verifikasi'   => 'Menunggu Verifikasi',
-                                            'lunas'                 => 'Lunas',
-                                            'ditolak'               => 'Ditolak',
-                                            default                 => ucfirst(str_replace('_', ' ', $item->status)),
-                                        };
-                                    @endphp
-                                    <span class="inline-flex px-2.5 py-1 rounded-full text-[11px] font-semibold {{ $statusColor }} whitespace-nowrap">
-                                        {{ $statusLabel }}
-                                    </span>
-                                </div>
-
-                                {{-- Detail --}}
-                                <div class="mt-4 grid grid-cols-2 gap-3 text-sm">
-                                    <div class="bg-gray-50 rounded-xl p-3">
-                                        <p class="text-[11px] text-gray-400 mb-0.5">Kelas Lomba</p>
-                                        <p class="font-medium text-gray-700 text-sm">{{ $item->kelasLomba?->nama ?? '-' }}</p>
-                                    </div>
-                                    <div class="bg-gray-50 rounded-xl p-3">
-                                        <p class="text-[11px] text-gray-400 mb-0.5">Harga</p>
-                                        <p class="font-medium text-gray-700 text-sm">Rp {{ number_format($item->harga, 0, ',', '.') }}</p>
-                                    </div>
-                                    <div class="col-span-2 bg-gray-50 rounded-xl p-3">
-                                        <p class="text-[11px] text-gray-400 mb-0.5">Acara</p>
-                                        <p class="font-medium text-gray-700 text-sm">{{ $item->acara?->nama ?? '-' }}</p>
-                                    </div>
-                                </div>
-
-                                <p class="mt-3 text-xs text-gray-400">
-                                    Didaftar {{ $item->created_at->format('d M Y') }} • {{ $item->created_at->format('H:i') }}
-                                </p>
-
-                                {{-- Action --}}
-                                <div class="mt-4">
-                                    @if($item->status === 'menunggu_pembayaran' && !$item->pembayaran)
-                                        <button type="button"
-                                                onclick="openUploadModal({{ $item->id }}, '{{ $item->nama_burung }}')"
-                                                class="w-full flex items-center justify-center gap-2 rounded-xl bg-[#527b5d] py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#42684d] active:scale-[0.98]">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
-                                            </svg>
-                                            Upload Bukti Pembayaran
-                                        </button>
-                                    @elseif($item->pembayaran)
-                                        <div class="flex items-center gap-3 p-3 rounded-xl bg-gray-50 border border-gray-100">
-                                            <img src="{{ asset('storage/' . $item->pembayaran->foto) }}"
-                                                 alt="Bukti"
-                                                 class="w-14 h-14 rounded-lg object-cover border border-gray-200"
-                                                 onclick="window.open(this.src, '_blank')">
-                                            <div class="flex-1 min-w-0">
-                                                <p class="text-sm font-medium text-gray-700 capitalize">
-                                                    Status: <span class="font-semibold">{{ $item->pembayaran->status }}</span>
-                                                </p>
-                                                @if($item->pembayaran->keterangan)
-                                                    <p class="text-xs text-gray-500 mt-0.5 truncate">{{ $item->pembayaran->keterangan }}</p>
-                                                @endif
+                                    <div class="divide-y divide-gray-100">
+                                        @foreach($items as $item)
+                                            <div class="flex items-center justify-between gap-3 px-5 py-3.5">
+                                                <div class="flex min-w-0 items-center gap-3">
+                                                    <span class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#527b5d] text-sm font-bold text-white">
+                                                        {{ $item->nomor_gantangan ?? '-' }}
+                                                    </span>
+                                                    <div class="min-w-0">
+                                                        <p class="truncate text-sm font-semibold text-gray-800">{{ $item->kelasLomba?->nama ?? '-' }}</p>
+                                                        <p class="truncate text-xs text-gray-500">{{ $item->nama_burung }}</p>
+                                                    </div>
+                                                </div>
+                                                <span class="whitespace-nowrap text-sm font-medium text-gray-700">
+                                                    Rp {{ number_format($item->harga, 0, ',', '.') }}
+                                                </span>
                                             </div>
-                                            <a href="{{ asset('storage/' . $item->pembayaran->foto) }}" target="_blank"
-                                               class="text-[#527b5d] text-xs font-semibold whitespace-nowrap">
-                                                Lihat
-                                            </a>
+                                        @endforeach
+                                    </div>
+
+                                    <div class="flex items-center justify-between border-t border-gray-100 bg-[#f8faf9] px-5 py-4">
+                                        <span class="text-sm font-bold text-gray-800">Total Pembayaran</span>
+                                        <span class="text-base font-bold text-[#527b5d]">Rp {{ $totalFmt }}</span>
+                                    </div>
+
+                                    @if($pembayaran || $bisaUpload)
+                                        <div class="border-t border-gray-100 px-5 py-4">
+                                            @if($pembayaran)
+                                                <div class="flex items-center gap-3">
+                                                    <img src="{{ asset('storage/' . $pembayaran->foto) }}" alt="Bukti"
+                                                        class="h-14 w-14 cursor-pointer rounded-lg border border-gray-200 object-cover"
+                                                        onclick="window.open(this.src, '_blank')">
+                                                    <div class="min-w-0 flex-1">
+                                                        <p class="text-sm font-medium capitalize text-gray-700">
+                                                            Status: <span class="font-semibold">{{ $pembayaran->status }}</span>
+                                                        </p>
+                                                        @if($pembayaran->catatan_admin)
+                                                            <p class="mt-0.5 text-xs text-gray-500">Catatan admin: {{ $pembayaran->catatan_admin }}</p>
+                                                        @endif
+                                                    </div>
+                                                    <a href="{{ asset('storage/' . $pembayaran->foto) }}" target="_blank"
+                                                    class="whitespace-nowrap text-xs font-semibold text-[#527b5d]">Lihat</a>
+                                                </div>
+                                            @else
+                                                <button type="button"
+                                                        onclick="openUploadModal({{ $first->id }}, @js($namaAcara), @js($totalFmt))"
+                                                        class="flex w-full items-center justify-center gap-2 rounded-xl bg-[#527b5d] py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#42684d] active:scale-[0.98]">
+                                                    Upload Bukti Pembayaran
+                                                </button>
+                                            @endif
                                         </div>
                                     @endif
                                 </div>
-                            </div>
-                        @endforeach
-                    </div>
-
-                    {{-- ==================== DESKTOP TABLE ==================== --}}
-                    <div class="hidden md:block overflow-x-auto">
-                        <table class="w-full text-sm text-left">
-                            <thead class="bg-gray-50 text-gray-600 font-semibold border-b border-gray-100">
-                                <tr>
-                                    <th class="px-5 py-4">No</th>
-                                    <th class="px-5 py-4">No. Gantangan</th>
-                                    <th class="px-5 py-4">Nama Burung</th>
-                                    <th class="px-5 py-4">Kelas Lomba</th>
-                                    <th class="px-5 py-4">Harga</th>
-                                    <th class="px-5 py-4">Status</th>
-                                    <th class="px-5 py-4">Bukti Bayar</th>
-                                    <th class="px-5 py-4">Tanggal</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-100">
-                                @foreach($riwayats as $index => $item)
-                                    <tr class="hover:bg-gray-50/70 transition">
-                                        <td class="px-5 py-4 text-gray-500">{{ $riwayats->firstItem() + $index }}</td>
-                                        <td class="px-5 py-4">
-                                            <span class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-[#527b5d] text-white text-sm font-bold">
-                                                {{ $item->nomor_gantangan ?? '-' }}
-                                            </span>
-                                        </td>
-                                        <td class="px-5 py-4 font-medium text-gray-800">{{ $item->nama_burung }}</td>
-                                        <td class="px-5 py-4">{{ $item->kelasLomba?->nama ?? '-' }}</td>
-                                        <td class="px-5 py-4 font-medium">Rp {{ number_format($item->harga, 0, ',', '.') }}</td>
-                                        <td class="px-5 py-4">
-                                            @php
-                                                $statusColor = match($item->status) {
-                                                    'menunggu_pembayaran'   => 'bg-yellow-100 text-yellow-800',
-                                                    'menunggu_verifikasi'   => 'bg-blue-100 text-blue-800',
-                                                    'lunas'                 => 'bg-emerald-100 text-emerald-800',
-                                                    'ditolak'               => 'bg-red-100 text-red-800',
-                                                    default                 => 'bg-gray-100 text-gray-700',
-                                                };
-                                                $statusLabel = match($item->status) {
-                                                    'menunggu_pembayaran'   => 'Menunggu Pembayaran',
-                                                    'menunggu_verifikasi'   => 'Menunggu Verifikasi',
-                                                    'lunas'                 => 'Lunas',
-                                                    'ditolak'               => 'Ditolak',
-                                                    default                 => ucfirst(str_replace('_', ' ', $item->status)),
-                                                };
-                                            @endphp
-                                            <span class="inline-flex px-2.5 py-1 rounded-full text-xs font-medium {{ $statusColor }}">
-                                                {{ $statusLabel }}
-                                            </span>
-                                        </td>
-                                        <td class="px-5 py-4">
-                                            @if($item->status === 'menunggu_pembayaran' && !$item->pembayaran)
-                                                <button type="button"
-                                                        onclick="openUploadModal({{ $item->id }}, '{{ $item->nama_burung }}')"
-                                                        class="inline-flex items-center gap-1.5 text-[#527b5d] hover:text-[#42684d] text-sm font-semibold transition">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
-                                                    </svg>
-                                                    Upload
-                                                </button>
-                                            @elseif($item->pembayaran)
-                                                <a href="{{ asset('storage/' . $item->pembayaran->foto) }}" target="_blank"
-                                                   class="inline-flex items-center gap-1.5 text-[#527b5d] hover:underline text-sm font-medium">
-                                                    Lihat Bukti
-                                                </a>
-                                                <span class="block text-xs text-gray-500 capitalize mt-0.5">
-                                                    {{ $item->pembayaran->status }}
-                                                </span>
-                                            @else
-                                                <span class="text-gray-400">-</span>
-                                            @endif
-                                        </td>
-                                        <td class="px-5 py-4 text-gray-500">
-                                            {{ $item->created_at->format('d M Y') }}
-                                            <span class="block text-xs text-gray-400">{{ $item->created_at->format('H:i') }}</span>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-
-                    @if($riwayats->hasPages())
-                        <div class="px-4 sm:px-6 py-4 border-t border-gray-100">
-                            {{ $riwayats->links() }}
+                            @endforeach
                         </div>
                     @endif
-                @endif
             </div>
         </div>
     </div>
@@ -252,6 +162,7 @@
                 <div>
                     <h3 class="text-lg font-bold text-gray-800">Upload Bukti Pembayaran</h3>
                     <p class="text-xs text-gray-500 mt-0.5" id="modalSubtitle">-</p>
+                    <p class="mt-1 text-sm font-bold text-[#527b5d]" id="modalTotal"></p>
                 </div>
                 <button type="button" onclick="closeUploadModal()"
                         class="p-2 rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition">
@@ -316,10 +227,11 @@
         const modal = document.getElementById('uploadModal');
         const form  = document.getElementById('uploadForm');
 
-        function openUploadModal(pesertaId, namaBurung) {
+        function openUploadModal(pesertaId, namaAcara, total) {
             form.action = `/peserta/${pesertaId}/upload-bukti`;
-            document.getElementById('modalSubtitle').textContent = namaBurung;
-            
+            document.getElementById('modalSubtitle').textContent = namaAcara;
+            document.getElementById('modalTotal').textContent = 'Total: Rp ' + total;
+
             // Reset preview
             document.getElementById('previewImage').classList.add('hidden');
             document.getElementById('previewEmpty').classList.remove('hidden');

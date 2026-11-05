@@ -29,18 +29,19 @@ Route::middleware('auth')->group(function () {
     Route::post('acara/{acara}/mulai', [AcaraController::class, 'mulai'])->name('acara.mulai');
     Route::resource('burung', BurungController::class);
     Route::resource('kelas-lomba', KelasLombaController::class);
-    Route::resource('pembayaran', PembayaranController::class)->only(['index', 'show']);
     Route::resource('penilaian', PenilaianController::class)->only(['index', 'show']);
+
+    Route::get('pembayaran', [PembayaranController::class, 'index'])->name('pembayaran.index');
+    Route::get('pembayaran/detail/{peserta}', [PembayaranController::class, 'detail'])->name('pembayaran.detail');
+    Route::get('pembayaran/{pembayaran}', [PembayaranController::class, 'show'])->name('pembayaran.show');
+    Route::patch('pembayaran/{pembayaran}/status', [PembayaranController::class, 'updateStatus'])
+        ->name('pembayaran.update-status');
 
     Route::get('/peserta/daftar', [PesertaController::class, 'create'])->name('peserta.daftar');
     Route::post('/peserta/daftar', [PesertaController::class, 'store'])->name('peserta.daftar.store');
     Route::get('/peserta/riwayat', [PesertaController::class, 'riwayat'])->name('peserta.riwayat');
-    Route::post('/peserta/{id}/upload-bukti', [PesertaController::class, 'uploadBukti'])
-    ->name('peserta.upload-bukti');
-
-    Route::resource('pembayaran', PembayaranController::class)->only(['index', 'show']);
-    Route::patch('pembayaran/{pembayaran}/status', [PembayaranController::class, 'updateStatus'])
-        ->name('pembayaran.update-status');
+    Route::post('/peserta/{peserta}/upload-bukti', [PesertaController::class, 'uploadBukti'])
+        ->name('peserta.upload-bukti');
 });
 
 require __DIR__.'/auth.php';

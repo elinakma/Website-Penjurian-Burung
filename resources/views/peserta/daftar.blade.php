@@ -17,18 +17,15 @@
                 <form id="form-peserta" action="{{ route('peserta.daftar.store') }}" method="POST" class="px-5 pt-3 pb-6 sm:px-6 sm:pt-4 sm:pb-6 space-y-5">
                     @csrf
 
-                    {{-- Nama Burung --}}
+                    {{-- Nama Pemilik (otomatis) --}}
                     <div>
-                        <label for="nama_burung" class="block text-sm font-semibold text-gray-700 mb-1.5">
-                            Nama Burung <span class="text-red-500">*</span>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">
+                            Nama Pemilik
                         </label>
-                        <input type="text" name="nama_burung" id="nama_burung" value="{{ old('nama_burung') }}"
-                            placeholder="Contoh: Murai Batu Super"
-                            class="w-full rounded-xl border-gray-200 px-4 py-2.5 text-sm focus:border-[#527b5d] focus:ring-[#527b5d] transition"
-                            required>
-                        @error('nama_burung')
-                            <p class="mt-1.5 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
+                        <input type="text"
+                            value="{{ Auth::user()->name }}"
+                            class="w-full rounded-xl border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700"
+                            readonly>
                     </div>
 
                     {{-- Alamat --}}
@@ -45,7 +42,7 @@
                         @enderror
                     </div>
 
-                    {{-- Nama Acara (otomatis dari acara yang sedang berlangsung) --}}
+                    {{-- Nama Acara --}}
                     <div>
                         <label for="acara_id" class="block text-sm font-semibold text-gray-700 mb-1.5">
                             Nama Acara <span class="text-red-500">*</span>
@@ -77,50 +74,34 @@
                         @enderror
                     </div>
 
-                    {{-- Jenis Burung --}}
+                    {{-- Kelas Lomba (multi checkbox - berdasarkan acara saja) --}}
                     <div>
-                        <label for="jenis_burung" class="block text-sm font-semibold text-gray-700 mb-1.5">
-                            Jenis Burung <span class="text-red-500">*</span>
-                        </label>
-                        <select name="jenis_burung" id="jenis_burung"
-                                class="w-full rounded-xl border-gray-200 px-4 py-2.5 text-sm focus:border-[#527b5d] focus:ring-[#527b5d] transition"
-                                required {{ $acaras->isEmpty() ? 'disabled' : '' }}>
-                            <option value="">-- Pilih Jenis Burung --</option>
-                            @foreach($burungs as $burung)
-                                <option value="{{ $burung->id }}" {{ old('jenis_burung') == $burung->id ? 'selected' : '' }}>
-                                    {{ $burung->nama }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('jenis_burung')
-                            <p class="mt-1.5 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    {{-- Kelas Lomba (terfilter berdasarkan Acara + Jenis Burung) --}}
-                    <div>
-                        <label for="kelas_lomba" class="block text-sm font-semibold text-gray-700 mb-1.5">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">
                             Kelas Lomba <span class="text-red-500">*</span>
+                            <span class="text-xs font-normal text-gray-500">(bisa pilih lebih dari satu)</span>
                         </label>
-                        <select name="kelas_lomba" id="kelas_lomba"
-                                class="w-full rounded-xl border-gray-200 px-4 py-2.5 text-sm focus:border-[#527b5d] focus:ring-[#527b5d] transition"
-                                required disabled>
-                            <option value="">-- Pilih Acara & Jenis Burung terlebih dahulu --</option>
-                        </select>
+
+                        <div id="kelas-lomba-container"
+                            class="rounded-xl border border-gray-200 bg-gray-50 p-4 space-y-2 max-h-72 overflow-y-auto">
+                            <p class="text-sm text-gray-500">Pilih Acara terlebih dahulu</p>
+                        </div>
+
                         @error('kelas_lomba')
                             <p class="mt-1.5 text-sm text-red-600">{{ $message }}</p>
                         @enderror
+                        @error('kelas_lomba.*')
+                            <p class="mt-1.5 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
                     </div>
 
-                    {{-- Tiket --}}
+                    {{-- Total Pembayaran --}}
                     <div>
                         <label class="block text-sm font-semibold text-gray-700 mb-1.5">
-                            Tiket / Harga
+                            Total Pembayaran
                         </label>
                         <input type="text" id="tiket_display"
-                            class="w-full rounded-xl border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700"
-                            placeholder="Pilih kelas lomba terlebih dahulu" readonly>
-                        <input type="hidden" name="tiket" id="tiket">
+                            class="w-full rounded-xl border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-700 font-semibold"
+                            value="Rp 0" readonly>
                     </div>
 
                     {{-- Tombol --}}
@@ -174,74 +155,93 @@
     <script>
     const semuaKelas = @json($kelasLombas ?? []);
 
-    const acaraSelect       = document.getElementById('acara_id');
-    const jenisBurungSelect = document.getElementById('jenis_burung');
-    const kelasLombaSelect  = document.getElementById('kelas_lomba');
-    const tiketDisplay      = document.getElementById('tiket_display');
-    const tiketInput        = document.getElementById('tiket');
+    const acaraSelect  = document.getElementById('acara_id');
+    const container    = document.getElementById('kelas-lomba-container');
+    const tiketDisplay = document.getElementById('tiket_display');
 
-    function resetKelasDanTiket() {
-        kelasLombaSelect.innerHTML = '<option value="">-- Pilih Kelas Lomba --</option>';
-        kelasLombaSelect.disabled = true;
-        tiketDisplay.value = '';
-        tiketInput.value = '';
+    function formatRupiah(angka) {
+        return 'Rp ' + Number(angka).toLocaleString('id-ID');
+    }
+
+    function hitungTotal() {
+        let total = 0;
+        document.querySelectorAll('input[name="kelas_lomba[]"]:checked').forEach(cb => {
+            total += Number(cb.dataset.harga || 0);
+        });
+        tiketDisplay.value = formatRupiah(total);
     }
 
     function filterKelas() {
-        const acaraId  = acaraSelect?.value;
-        const burungId = jenisBurungSelect.value;
+        const acaraId = acaraSelect?.value;
+        container.innerHTML = '';
 
-        resetKelasDanTiket();
+        if (!acaraId) {
+            container.innerHTML = '<p class="text-sm text-gray-500">Pilih Acara terlebih dahulu</p>';
+            tiketDisplay.value = 'Rp 0';
+            return;
+        }
 
-        if (!acaraId || !burungId) return;
-
-        const filtered = semuaKelas.filter(kelas => 
-            kelas.acara_id == acaraId && kelas.burung_id == burungId
-        );
+        const filtered = semuaKelas.filter(kelas => kelas.acara_id == acaraId);
 
         if (filtered.length === 0) {
-            kelasLombaSelect.innerHTML = '<option value="">Tidak ada kelas untuk kombinasi ini</option>';
+            container.innerHTML = '<p class="text-sm text-red-600">Tidak ada kelas lomba untuk acara ini</p>';
+            tiketDisplay.value = 'Rp 0';
             return;
         }
 
         filtered.forEach(kelas => {
-            const option = document.createElement('option');
-            option.value = kelas.id_kelas;
-            option.textContent = `${kelas.nama} - Rp ${Number(kelas.harga).toLocaleString('id-ID')}`;
-            option.dataset.harga = kelas.harga;
-            kelasLombaSelect.appendChild(option);
+            const label = document.createElement('label');
+            label.className = 'flex items-center gap-3 p-3 rounded-lg border border-gray-200 bg-white cursor-pointer hover:border-[#527b5d] transition';
+
+            const namaBurung = kelas.burung ? kelas.burung.nama : '-';
+
+            label.innerHTML = `
+                <input type="checkbox"
+                    name="kelas_lomba[]"
+                    value="${kelas.id_kelas}"
+                    data-harga="${kelas.harga}"
+                    class="rounded border-gray-300 text-[#527b5d] focus:ring-[#527b5d]">
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-800">${kelas.nama}</p>
+                    <p class="text-xs text-gray-500">${namaBurung} • Kuota: ${kelas.kuota}</p>
+                </div>
+                <span class="text-sm font-semibold text-[#527b5d] whitespace-nowrap">
+                    ${formatRupiah(kelas.harga)}
+                </span>
+            `;
+
+            container.appendChild(label);
         });
 
-        kelasLombaSelect.disabled = false;
+        container.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+            cb.addEventListener('change', hitungTotal);
+        });
+
+        hitungTotal();
     }
 
-    // Event listeners
     if (acaraSelect) {
         acaraSelect.addEventListener('change', filterKelas);
-    }
-    jenisBurungSelect.addEventListener('change', filterKelas);
 
-    kelasLombaSelect.addEventListener('change', function () {
-        const selectedOption = this.options[this.selectedIndex];
-        const harga = selectedOption.dataset.harga;
-
-        if (harga) {
-            tiketDisplay.value = 'Rp ' + Number(harga).toLocaleString('id-ID');
-            tiketInput.value = harga;
-        } else {
-            tiketDisplay.value = '';
-            tiketInput.value = '';
+        // Auto load jika hanya 1 acara
+        if (acaraSelect.value) {
+            filterKelas();
         }
-    });
+    }
 
-    // Modal
-    const form = document.getElementById('form-peserta');
+    // Modal konfirmasi
+    const form      = document.getElementById('form-peserta');
     const btnSimpan = document.getElementById('btn-simpan');
-    const modal = document.getElementById('modal-konfirmasi');
-    const btnBatal = document.getElementById('btn-batal-modal');
-    const btnYa = document.getElementById('btn-ya-modal');
+    const modal     = document.getElementById('modal-konfirmasi');
+    const btnBatal  = document.getElementById('btn-batal-modal');
+    const btnYa     = document.getElementById('btn-ya-modal');
 
     btnSimpan.addEventListener('click', function () {
+        const checked = document.querySelectorAll('input[name="kelas_lomba[]"]:checked');
+        if (checked.length === 0) {
+            alert('Pilih minimal satu kelas lomba.');
+            return;
+        }
         if (!form.checkValidity()) {
             form.reportValidity();
             return;
